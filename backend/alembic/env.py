@@ -6,7 +6,7 @@ from alembic import context
 
 # Importuj Base a všechny modely
 from app.database import Base
-from app.models import user  # noqa: F401
+import app.models  # noqa: F401 — importuje všechny modely
 from app.config import settings
 
 config = context.config
