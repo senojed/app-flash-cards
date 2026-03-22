@@ -53,4 +53,5 @@ export const api = {
 
   // Stats
   getStats: () => http.get('/stats'),
+  resetStats: () => http.delete('/stats'),
 }
