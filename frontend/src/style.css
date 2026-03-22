@@ -4,8 +4,6 @@ html {
   font-size: 22px;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
 }

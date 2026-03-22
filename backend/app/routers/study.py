@@ -123,7 +123,7 @@ async def rate_card(
         repetitions=prog.repetitions if prog else 0,
         quality=req.quality,
     )
-    learned = sm2_is_learned(result["interval"], settings.sm2_learned_threshold_days)
+    learned = req.quality == 5 or sm2_is_learned(result["interval"], settings.sm2_learned_threshold_days)
 
     if prog is None:
         prog = CardProgress(

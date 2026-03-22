@@ -61,7 +61,7 @@ export const useStudyStore = defineStore('study', () => {
     const card = currentCard.value
     if (!card) return
 
-    animationDirection.value = quality < 3 ? 'left' : 'right'
+    animationDirection.value = quality <= 3 ? 'left' : 'right'
 
     const { data } = await api.rateCard({
       card_id: card.card_id,

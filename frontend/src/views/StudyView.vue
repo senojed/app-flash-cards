@@ -21,12 +21,14 @@
         <p class="text-4xl">✅</p>
         <p class="text-white font-semibold">Žádné karty ke studiu!</p>
         <p class="text-gray-400 text-sm">Všechny karty jsou naučeny nebo nejsou splatné.</p>
-        <button @click="studyAll" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-2 rounded-lg text-sm">
-          Procvičit vše (ignorovat plán)
-        </button>
-        <button @click="$router.push('/')" class="block mx-auto text-gray-500 text-sm mt-2">
-          Zpět na Dashboard
-        </button>
+        <div class="flex flex-col gap-3 items-center">
+          <button @click="studyAll" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold w-64">
+            ▶ Procvičit vše
+          </button>
+          <button @click="$router.push('/')" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold w-64">
+            ← Dashboard
+          </button>
+        </div>
       </div>
 
       <template v-else-if="store.cards.length > 0">
@@ -57,9 +59,14 @@
         <div v-else-if="store.isFinished" class="text-center space-y-4">
           <p class="text-4xl">🎉</p>
           <p class="text-white font-semibold">Session dokončena!</p>
-          <button @click="$router.push('/')" class="bg-indigo-600 text-white px-6 py-2 rounded-lg text-sm">
-            Zpět na Dashboard
-          </button>
+          <div class="flex flex-col gap-3 items-center">
+            <button @click="studyAll" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold w-64">
+              ▶ Procvičit znovu
+            </button>
+            <button @click="$router.push('/')" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold w-64">
+              ← Dashboard
+            </button>
+          </div>
         </div>
       </template>
 
@@ -68,7 +75,7 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '../stores/study'
 import { useLanguagesStore } from '../stores/languages'
@@ -85,9 +92,11 @@ const showRecovery = ref(false)
 const loading = ref(false)
 const currentLessonIds = ref([])
 
-const slideClass = computed(() =>
-  store.animationDirection === 'left' ? 'slide-left' : 'slide-right'
-)
+const slideClass = ref('')
+
+watch(() => store.animationDirection, (dir) => {
+  if (dir) slideClass.value = dir === 'left' ? 'slide-left' : 'slide-right'
+})
 
 onMounted(async () => {
   // Vždy načti dashboard (oprava prázdného sidebaru po reloadu)

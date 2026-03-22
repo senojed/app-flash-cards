@@ -1,5 +1,5 @@
 <template>
-  <aside class="w-64 bg-gray-900 flex flex-col border-r border-gray-800 shrink-0">
+  <aside class="w-64 bg-gray-900 flex flex-col border border-gray-800 rounded-2xl shrink-0 overflow-hidden">
     <!-- Header -->
     <div class="px-4 py-4 border-b border-gray-800 flex items-center justify-between">
       <span class="text-indigo-400 font-bold text-base">📚 FlashCards</span>

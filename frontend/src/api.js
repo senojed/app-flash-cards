@@ -22,6 +22,7 @@ export const api = {
 
   // Cards
   getCards: (lessonId) => http.get('/cards', { params: { lesson_id: lessonId } }),
+  getCard: (cardId) => http.get(`/cards/${cardId}`),
   createCard: (data) => http.post('/cards', data),
   updateCard: (id, data) => http.patch(`/cards/${id}`, data),
   deleteCard: (id) => http.delete(`/cards/${id}`),

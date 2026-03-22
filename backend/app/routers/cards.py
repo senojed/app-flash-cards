@@ -48,6 +48,19 @@ async def create_card(data: CardCreate, user: User = Depends(get_current_user), 
     return result.unique().scalar_one()
 
 
+@router.get("/{card_id}", response_model=CardOut)
+async def get_card(card_id: uuid.UUID, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
+    result = await db.execute(
+        select(Card).join(Card.lesson).join(Lesson.language)
+        .where(Card.id == card_id, Language.user_id == user.id)
+        .options(joinedload(Card.fields))
+    )
+    card = result.unique().scalar_one_or_none()
+    if not card:
+        raise HTTPException(404)
+    return card
+
+
 @router.patch("/{card_id}", response_model=CardOut)
 async def update_card(card_id: uuid.UUID, data: CardUpdate, user: User = Depends(get_current_user), db: AsyncSession = Depends(get_db)):
     result = await db.execute(

@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     postgres_port: int = 5432
     libretranslate_url: str = "http://libretranslate:5000"
     media_max_size_mb: int = 5
-    sm2_learned_threshold_days: int = 21
+    sm2_learned_threshold_days: int = 7
 
     @property
     def database_url(self) -> str:

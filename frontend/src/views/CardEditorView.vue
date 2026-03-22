@@ -1,6 +1,6 @@
 <template>
   <AppLayout>
-    <div class="p-6 max-w-lg mx-auto space-y-6">
+    <div class="max-w-lg mx-auto space-y-6">
       <div class="flex items-center gap-3">
         <button @click="$router.back()" class="text-gray-400 hover:text-white text-sm">← Zpět</button>
         <h1 class="text-white font-bold text-lg">{{ isNew ? 'Nová karta' : 'Upravit kartu' }}</h1>
@@ -10,7 +10,7 @@
         <label class="text-gray-400 text-xs uppercase tracking-wider">Přední strana</label>
         <textarea
           v-model="front"
-          @input="scheduleTranslate"
+          @input="isDirty = true; scheduleTranslate()"
           rows="3"
           class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500 resize-none"
         />
@@ -23,6 +23,7 @@
           v-model="back"
           rows="3"
           class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500 resize-none"
+        @input="isDirty = true"
         />
         <MediaUpload v-if="cardId" :card-id="cardId" label="back" v-model="backMedia" />
       </div>
@@ -42,7 +43,7 @@
 
 <script setup>
 import { ref, computed, onMounted } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import { api } from '../api'
 import AppLayout from '../components/layout/AppLayout.vue'
 import MediaUpload from '../components/cards/MediaUpload.vue'
@@ -51,13 +52,20 @@ const route = useRoute()
 const router = useRouter()
 const isNew = computed(() => !route.params.cardId)
 const cardId = ref(route.params.cardId || null)
-const lessonId = ref(route.params.lessonId)
+const lessonId = ref(route.params.lessonId || route.query.lessonId || null)
 const front = ref('')
 const back = ref('')
 const frontMedia = ref(null)
 const backMedia = ref(null)
 const targetLang = ref('cs')
 let translateTimer = null
+const isDirty = ref(false)
+
+onBeforeRouteLeave(() => {
+  if (isDirty.value) {
+    return confirm('Máš neuložené změny. Opustit stránku?')
+  }
+})
 
 async function scheduleTranslate() {
   clearTimeout(translateTimer)
@@ -89,6 +97,7 @@ async function save() {
       ]
     })
   }
+  isDirty.value = false
   router.back()
 }
 
@@ -100,22 +109,18 @@ async function deleteCard() {
 }
 
 onMounted(async () => {
-  const { data: dashboard } = await api.getDashboard()
-  for (const lang of dashboard) {
-    for (const lesson of lang.lessons) {
-      if (lesson.id === lessonId.value) {
-        targetLang.value = lang.target_lang
-        break
-      }
-    }
+  if (!isNew.value) {
+    const { data: card } = await api.getCard(cardId.value)
+    front.value = card.fields.find(f => f.label === 'front')?.content || ''
+    back.value = card.fields.find(f => f.label === 'back')?.content || ''
+    if (!lessonId.value) lessonId.value = card.lesson_id
   }
 
-  if (!isNew.value) {
-    const { data } = await api.getCards(lessonId.value)
-    const card = data.find(c => c.id === cardId.value)
-    if (card) {
-      front.value = card.fields.find(f => f.label === 'front')?.content || ''
-      back.value = card.fields.find(f => f.label === 'back')?.content || ''
+  if (lessonId.value) {
+    const { data: dashboard } = await api.getDashboard()
+    for (const lang of dashboard) {
+      const lesson = lang.lessons.find(l => l.id === lessonId.value)
+      if (lesson) { targetLang.value = lang.target_lang || 'cs'; break }
     }
   }
 })

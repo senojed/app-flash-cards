@@ -1,15 +1,15 @@
 <template>
   <div>
     <div class="flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-gray-800"
-         @click="expanded = !expanded">
-      <span class="text-gray-500 text-xs w-3">{{ expanded ? '▼' : '▶' }}</span>
+         @click="store.setExpanded(language.id, !store.isExpanded(language.id))">
+      <span class="text-gray-500 text-xs w-3">{{ store.isExpanded(language.id) ? '▼' : '▶' }}</span>
       <span class="text-lg">{{ language.emoji }}</span>
       <span class="flex-1 text-sm font-semibold text-gray-200 truncate">{{ language.name }}</span>
       <span class="text-green-400 text-xs font-bold">{{ language.learned_cards }}</span>
       <span class="text-gray-600 text-xs">/{{ language.total_cards }}</span>
       <ContextMenu @rename="showRename = true" @reset="handleReset" @delete="showConfirm = true" />
     </div>
-    <div v-if="expanded" class="pl-5 space-y-0.5 mt-0.5">
+    <div v-if="store.isExpanded(language.id)" class="pl-5 space-y-0.5 mt-0.5">
       <LessonItem v-for="lesson in language.lessons" :key="lesson.id" :lesson="lesson" :language-id="language.id" />
       <div v-if="showAddLesson" class="px-2 py-2 space-y-2 bg-gray-800 rounded-lg mt-1">
         <input v-model="newLessonName" placeholder="Název lekce" class="w-full bg-gray-700 rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" @keyup.enter="addLesson" autofocus />
@@ -23,7 +23,7 @@
       </button>
     </div>
 
-    <RenameDialog v-if="showRename" :initial-value="language.name" @confirm="handleRename" @cancel="showRename = false" />
+    <EditLanguageDialog v-if="showRename" :initial-name="language.name" :initial-emoji="language.emoji" @confirm="handleRename" @cancel="showRename = false" />
     <ConfirmDialog
       v-if="showConfirm"
       title="Smazat jazyk"
@@ -36,24 +36,24 @@
 
 <script setup>
 import { ref } from 'vue'
+
 import { useLanguagesStore } from '../../stores/languages'
 import { api } from '../../api'
 import LessonItem from './LessonItem.vue'
 import ContextMenu from './ContextMenu.vue'
-import RenameDialog from '../modals/RenameDialog.vue'
+import EditLanguageDialog from '../modals/EditLanguageDialog.vue'
 import ConfirmDialog from '../modals/ConfirmDialog.vue'
 
 const props = defineProps({ language: Object })
 const store = useLanguagesStore()
-const expanded = ref(true)
 const showRename = ref(false)
 const showConfirm = ref(false)
 const showAddLesson = ref(false)
 const newLessonName = ref('')
 
-async function handleRename(name) {
+async function handleRename({ name, emoji }) {
   showRename.value = false
-  await api.updateLanguage(props.language.id, { name })
+  await api.updateLanguage(props.language.id, { name, emoji })
   await store.fetchDashboard()
 }
 
