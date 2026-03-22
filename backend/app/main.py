@@ -1,7 +1,13 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
+from app.auth import get_current_user
+from app.models.user import User
 
 app = FastAPI(title="FlashCards API")
 
 @app.get("/api/health")
 async def health():
     return {"status": "ok"}
+
+@app.get("/api/me")
+async def me(user: User = Depends(get_current_user)):
+    return {"username": user.username, "email": user.email}
