@@ -15,11 +15,14 @@ export const useStudyStore = defineStore('study', () => {
   const isFinished = computed(() => currentIndex.value >= cards.value.length)
 
   async function startSession(lessonIds) {
-    const { data } = await api.getStudyCards(lessonIds)
-    cards.value = data
+    // Reset všeho před načtením nových karet
+    cards.value = []
     currentIndex.value = 0
     history.value = []
     revealed.value = false
+    animationDirection.value = null
+    const { data } = await api.getStudyCards(lessonIds)
+    cards.value = data
     saveSession(lessonIds)
   }
 

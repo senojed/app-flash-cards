@@ -70,8 +70,6 @@ onMounted(async () => {
   const lessonParam = route.query.lessons
 
   if (lessonParam) {
-    // Vždy začni novou session pokud jsou předány lekce
-    store.clearSession()
     const lessonIds = lessonParam.split(',')
     await store.startSession(lessonIds)
     return
