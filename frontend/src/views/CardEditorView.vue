@@ -28,7 +28,7 @@
           v-model="back"
           rows="3"
           class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500 resize-none"
-        @input="isDirty = true"
+          @input="isDirty = true"
         />
         <MediaUpload v-if="cardId" :card-id="cardId" label="back" v-model="backMedia" />
       </div>
@@ -78,8 +78,28 @@ async function doTranslate() {
   if (!front.value.trim() || translating.value) return
   translating.value = true
   try {
-    const { data } = await api.translate(front.value, targetLang.value, sourceLang.value)
-    back.value = data.translation
+    const { data } = await api.translate(front.value, targetLang.value, 'cs')
+    let translation = data.translation
+
+    // Pro němčinu zkus přidat člen přes Wiktionary (volání z prohlížeče)
+    if (targetLang.value === 'de' && translation && translation.trim().split(/\s+/).length <= 2) {
+      const word = translation.trim().split(/\s+/).pop().toLowerCase()
+      try {
+        const capitalized = word.charAt(0).toUpperCase() + word.slice(1)
+        const r = await fetch(`https://en.wiktionary.org/w/api.php?action=parse&page=${encodeURIComponent(capitalized)}&prop=wikitext&format=json&origin=*`)
+        const json = await r.json()
+        const wikitext = json?.parse?.wikitext?.['*'] || ''
+        if (wikitext.includes('==German==')) {
+          const m = wikitext.match(/\|g=([mfn])/)
+          if (m) {
+            const article = { m: 'der', f: 'die', n: 'das' }[m[1]]
+            if (article) translation = `${article} ${translation}`
+          }
+        }
+      } catch { /* Wiktionary nedostupný */ }
+    }
+
+    back.value = translation
     isDirty.value = true
   } catch {
     // překlad není dostupný

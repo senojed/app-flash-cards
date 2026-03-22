@@ -48,6 +48,9 @@ export const api = {
   // Translate
   translate: (text, targetLang, sourceLang = 'auto') => http.post('/translate', { text, target_lang: targetLang, source_lang: sourceLang }),
 
+  // Wiktionary
+  getGender: (word) => http.get('/wiktionary/gender', { params: { word } }),
+
   // Stats
   getStats: () => http.get('/stats'),
 }

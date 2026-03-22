@@ -67,9 +67,9 @@
       <router-link to="/stats" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-gray-800">
         📊 Statistiky
       </router-link>
-      <router-link to="/settings" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-gray-800">
+      <button disabled class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 cursor-not-allowed rounded-lg w-full text-left">
         ⚙️ Nastavení
-      </router-link>
+      </button>
     </div>
   </aside>
 </template>

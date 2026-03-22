@@ -18,22 +18,13 @@
           <button @click.stop="openSettings(lang)" class="text-gray-500 hover:text-gray-300 px-1">⚙️</button>
         </div>
         <div class="space-y-1">
-          <div
+          <LessonItem
             v-for="lesson in lang.lessons"
             :key="lesson.id"
-            class="flex items-center gap-3 bg-gray-800 rounded-xl px-4 py-3"
-          >
-            <input
-              type="checkbox"
-              :checked="store.selectedLessonIds.has(lesson.id)"
-              @change="store.toggleLesson(lesson.id)"
-              class="w-5 h-5 accent-indigo-500"
-            />
-            <span class="flex-1 text-gray-200">{{ lesson.name }}</span>
-            <span class="text-green-400 text-xs">{{ lesson.learned_cards }}</span>
-            <span class="text-gray-600 text-xs">/{{ lesson.total_cards }}</span>
-            <router-link :to="`/lessons/${lesson.id}/cards`" class="text-gray-500 text-xs hover:text-gray-300">→</router-link>
-          </div>
+            :lesson="lesson"
+            :language-id="lang.id"
+            class="bg-gray-800 rounded-xl px-4 py-3"
+          />
         </div>
       </div>
 
@@ -59,6 +50,7 @@ import { useLanguagesStore } from '../stores/languages'
 import { api } from '../api'
 import AppLayout from '../components/layout/AppLayout.vue'
 import LanguageSettingsDialog from '../components/modals/LanguageSettingsDialog.vue'
+import LessonItem from '../components/sidebar/LessonItem.vue'
 
 const store = useLanguagesStore()
 const router = useRouter()
