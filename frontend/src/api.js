@@ -46,7 +46,7 @@ export const api = {
   },
 
   // Translate
-  translate: (text, targetLang) => http.post('/translate', { text, target_lang: targetLang }),
+  translate: (text, targetLang, sourceLang = 'auto') => http.post('/translate', { text, target_lang: targetLang, source_lang: sourceLang }),
 
   // Stats
   getStats: () => http.get('/stats'),

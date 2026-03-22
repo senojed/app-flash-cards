@@ -50,6 +50,7 @@
             :card="store.currentCard"
             :revealed="store.revealed"
             :slide-class="slideClass"
+            :source-lang="sourceLang"
             @reveal="store.reveal()"
           />
           <RatingButtons v-if="store.revealed" @rate="handleRate" />
@@ -91,6 +92,7 @@ const langStore = useLanguagesStore()
 const showRecovery = ref(false)
 const loading = ref(false)
 const currentLessonIds = ref([])
+const sourceLang = ref('')
 
 const slideClass = ref('')
 
@@ -108,6 +110,13 @@ onMounted(async () => {
 
   if (lessonParam) {
     currentLessonIds.value = lessonParam.split(',')
+    // Zjisti source_lang z prvního jazyka který obsahuje tyto lekce
+    for (const lang of langStore.languages) {
+      if (lang.lessons.some(l => currentLessonIds.value.includes(l.id))) {
+        sourceLang.value = lang.source_lang || ''
+        break
+      }
+    }
     loading.value = true
     await store.startSession(currentLessonIds.value)
     loading.value = false

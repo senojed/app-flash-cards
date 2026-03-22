@@ -30,7 +30,7 @@
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useRoute } from 'vue-router'
 import { useLanguagesStore } from '../stores/languages'
 import { api } from '../api'
@@ -38,6 +38,7 @@ import AppLayout from '../components/layout/AppLayout.vue'
 
 const route = useRoute()
 const langStore = useLanguagesStore()
+const lessonId = computed(() => route.params.lessonId)
 const cards = ref([])
 const lessonName = ref('')
 const languageEmoji = ref('')

@@ -57,6 +57,7 @@ const front = ref('')
 const back = ref('')
 const frontMedia = ref(null)
 const backMedia = ref(null)
+const sourceLang = ref('en')
 const targetLang = ref('cs')
 let translateTimer = null
 const isDirty = ref(false)
@@ -72,7 +73,7 @@ async function scheduleTranslate() {
   if (!front.value.trim() || back.value) return
   translateTimer = setTimeout(async () => {
     try {
-      const { data } = await api.translate(front.value, targetLang.value)
+      const { data } = await api.translate(front.value, targetLang.value, sourceLang.value)
       if (!back.value) back.value = data.translation
     } catch {
       // překlad není dostupný
@@ -120,7 +121,11 @@ onMounted(async () => {
     const { data: dashboard } = await api.getDashboard()
     for (const lang of dashboard) {
       const lesson = lang.lessons.find(l => l.id === lessonId.value)
-      if (lesson) { targetLang.value = lang.target_lang || 'cs'; break }
+      if (lesson) {
+        sourceLang.value = lang.source_lang || 'en'
+        targetLang.value = lang.target_lang || 'cs'
+        break
+      }
     }
   }
 })

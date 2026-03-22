@@ -11,16 +11,14 @@
         </p>
         <p class="text-white text-3xl font-bold mb-4">{{ card.front }}</p>
 
-        <button v-if="card.front_audio" @click.stop="playAudio(card.front_audio)"
-                class="text-indigo-400 text-sm mb-4">🔊 přehrát</button>
+        <button @click.stop="speak(card.front, sourceLang)" class="text-indigo-400 text-sm mb-4">🔊</button>
 
         <Transition name="fade">
           <div v-if="revealed" class="mt-4 border-t border-indigo-800 pt-4">
             <p class="text-gray-300 text-2xl">{{ card.back }}</p>
             <img v-if="card.back_image" :src="`/media/${card.back_image}`"
                  class="mt-3 rounded-lg max-h-32 mx-auto" />
-            <button v-if="card.back_audio" @click.stop="playAudio(card.back_audio)"
-                    class="text-indigo-400 text-sm mt-2">🔊</button>
+            <button @click.stop="speak(card.back)" class="text-indigo-400 text-sm mt-2">🔊</button>
           </div>
         </Transition>
 
@@ -31,11 +29,15 @@
 </template>
 
 <script setup>
-defineProps({ card: Object, revealed: Boolean, slideClass: String })
+const props = defineProps({ card: Object, revealed: Boolean, slideClass: String, sourceLang: { type: String, default: '' } })
 const emit = defineEmits(['reveal'])
 
-function playAudio(path) {
-  new Audio(`/media/${path}`).play()
+function speak(text, lang) {
+  if (!text || !window.speechSynthesis) return
+  window.speechSynthesis.cancel()
+  const utt = new SpeechSynthesisUtterance(text)
+  if (lang) utt.lang = lang
+  window.speechSynthesis.speak(utt)
 }
 </script>
 
