@@ -7,7 +7,7 @@
       <span class="flex-1 text-sm font-semibold text-gray-200 truncate">{{ language.name }}</span>
       <span class="text-green-400 text-xs font-bold">{{ language.learned_cards }}</span>
       <span class="text-gray-600 text-xs">/{{ language.total_cards }}</span>
-      <ContextMenu @rename="showRename = true" @reset="handleReset" @delete="showConfirm = true" />
+      <ContextMenu :show-settings="true" @settings="showSettings = true" @rename="showRename = true" @reset="handleReset" @delete="showConfirm = true" />
     </div>
     <div v-if="store.isExpanded(language.id)" class="pl-5 space-y-0.5 mt-0.5">
       <LessonItem v-for="lesson in language.lessons" :key="lesson.id" :lesson="lesson" :language-id="language.id" />
@@ -23,7 +23,8 @@
       </button>
     </div>
 
-    <EditLanguageDialog v-if="showRename" :initial-name="language.name" :initial-emoji="language.emoji" :initial-source-lang="language.source_lang" :initial-direction-mode="language.direction_mode" @confirm="handleRename" @cancel="showRename = false" />
+    <LanguageSettingsDialog v-if="showSettings" :initial-direction-mode="language.direction_mode" @confirm="handleSettings" @cancel="showSettings = false" />
+    <EditLanguageDialog v-if="showRename" :initial-name="language.name" :initial-emoji="language.emoji" :initial-source-lang="language.source_lang" @confirm="handleRename" @cancel="showRename = false" />
     <ConfirmDialog
       v-if="showConfirm"
       title="Smazat jazyk"
@@ -36,24 +37,31 @@
 
 <script setup>
 import { ref } from 'vue'
-
 import { useLanguagesStore } from '../../stores/languages'
 import { api } from '../../api'
 import LessonItem from './LessonItem.vue'
 import ContextMenu from './ContextMenu.vue'
 import EditLanguageDialog from '../modals/EditLanguageDialog.vue'
+import LanguageSettingsDialog from '../modals/LanguageSettingsDialog.vue'
 import ConfirmDialog from '../modals/ConfirmDialog.vue'
 
 const props = defineProps({ language: Object })
 const store = useLanguagesStore()
 const showRename = ref(false)
+const showSettings = ref(false)
 const showConfirm = ref(false)
 const showAddLesson = ref(false)
 const newLessonName = ref('')
 
-async function handleRename({ name, emoji, source_lang, direction_mode }) {
+async function handleRename({ name, emoji, source_lang }) {
   showRename.value = false
-  await api.updateLanguage(props.language.id, { name, emoji, source_lang, direction_mode })
+  await api.updateLanguage(props.language.id, { name, emoji, source_lang })
+  await store.fetchDashboard()
+}
+
+async function handleSettings({ direction_mode }) {
+  showSettings.value = false
+  await api.updateLanguage(props.language.id, { direction_mode })
   await store.fetchDashboard()
 }
 

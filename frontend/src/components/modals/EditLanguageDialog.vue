@@ -18,15 +18,6 @@
           <input v-model="sourceLang" @keyup.enter="confirm" placeholder="en"
             class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500" />
         </div>
-        <div class="space-y-2">
-          <label class="text-gray-400 text-xs">Procvičování</label>
-          <select v-model="directionMode"
-            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500">
-            <option value="front_to_back">Přední → Zadní</option>
-            <option value="back_to_front">Zadní → Přední</option>
-            <option value="random">Náhodně (obě strany)</option>
-          </select>
-        </div>
         <div class="flex gap-3 justify-end">
           <button @click="$emit('cancel')" class="text-gray-400 px-4 py-2 text-sm">Zrušit</button>
           <button @click="confirm" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Uložit</button>
@@ -38,14 +29,13 @@
 
 <script setup>
 import { ref } from 'vue'
-const props = defineProps({ initialName: String, initialEmoji: String, initialSourceLang: String, initialDirectionMode: String })
+const props = defineProps({ initialName: String, initialEmoji: String, initialSourceLang: String })
 const emit = defineEmits(['confirm', 'cancel'])
 const name = ref(props.initialName || '')
 const emoji = ref(props.initialEmoji || '')
 const sourceLang = ref(props.initialSourceLang || 'en')
-const directionMode = ref(props.initialDirectionMode || 'front_to_back')
 
 function confirm() {
-  emit('confirm', { name: name.value, emoji: emoji.value, source_lang: sourceLang.value, direction_mode: directionMode.value })
+  emit('confirm', { name: name.value, emoji: emoji.value, source_lang: sourceLang.value })
 }
 </script>

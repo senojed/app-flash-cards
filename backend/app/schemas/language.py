@@ -7,7 +7,7 @@ from app.models.lesson import LessonDirectionMode
 class LanguageCreate(BaseModel):
     name: str
     emoji: str = "🌐"
-    direction_mode: DirectionMode = DirectionMode.front_to_back
+    direction_mode: DirectionMode = DirectionMode.random
     source_lang: str = "en"
     target_lang: str = "cs"
     order: int = 0

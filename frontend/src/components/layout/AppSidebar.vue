@@ -54,11 +54,11 @@
         ✕ Zrušit lekci
       </button>
       <button
-        v-else-if="store.selectedCount > 0 || isFinished"
+        v-else-if="store.selectedCount > 0"
         @click="startStudy"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2.5 rounded-lg"
       >
-        ▶ {{ isFinished ? 'Procvičit vybrané' : `Začít vybrané (${store.selectedCount})` }}
+        ▶ Začít vybrané ({{ store.selectedCount }})
       </button>
     </div>
 
@@ -99,9 +99,6 @@ const isStudying = computed(() =>
   route.path === '/study' && studyStore.cards.length > 0 && !studyStore.isFinished
 )
 
-const isFinished = computed(() =>
-  route.path === '/study' && studyStore.isFinished
-)
 
 function startStudy() {
   const ids = store.selectedCount > 0

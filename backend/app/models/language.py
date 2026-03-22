@@ -19,7 +19,7 @@ class Language(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"))
     name: Mapped[str] = mapped_column(String(255))
     emoji: Mapped[str] = mapped_column(String(10), default="🌐")
-    direction_mode: Mapped[DirectionMode] = mapped_column(SAEnum(DirectionMode), default=DirectionMode.front_to_back)
+    direction_mode: Mapped[DirectionMode] = mapped_column(SAEnum(DirectionMode), default=DirectionMode.random)
     source_lang: Mapped[str] = mapped_column(String(10), default="en")
     target_lang: Mapped[str] = mapped_column(String(10), default="cs")
     order: Mapped[int] = mapped_column(Integer, default=0)

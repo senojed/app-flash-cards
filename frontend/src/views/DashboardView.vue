@@ -12,9 +12,10 @@
     <div v-else class="space-y-4">
       <div v-for="lang in store.languages" :key="lang.id" class="space-y-2">
         <div class="flex items-center gap-2 px-1">
-          <span class="font-bold text-gray-200">{{ lang.emoji }} {{ lang.name }}</span>
+          <span class="flex-1 font-bold text-gray-200">{{ lang.emoji }} {{ lang.name }}</span>
           <span class="text-green-400 text-xs">{{ lang.learned_cards }}</span>
           <span class="text-gray-600 text-xs">/{{ lang.total_cards }}</span>
+          <button @click.stop="openSettings(lang)" class="text-gray-500 hover:text-gray-300 px-1">⚙️</button>
         </div>
         <div class="space-y-1">
           <div
@@ -46,6 +47,8 @@
         </button>
       </div>
     </div>
+
+    <LanguageSettingsDialog v-if="settingsLang" :initial-direction-mode="settingsLang.direction_mode" @confirm="handleSettings" @cancel="settingsLang = null" />
   </AppLayout>
 </template>
 
@@ -53,11 +56,14 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useLanguagesStore } from '../stores/languages'
+import { api } from '../api'
 import AppLayout from '../components/layout/AppLayout.vue'
+import LanguageSettingsDialog from '../components/modals/LanguageSettingsDialog.vue'
 
 const store = useLanguagesStore()
 const router = useRouter()
 const isMobile = ref(false)
+const settingsLang = ref(null)
 
 function checkMobile() { isMobile.value = window.innerWidth < 768 }
 onMounted(() => {
@@ -69,5 +75,13 @@ onUnmounted(() => window.removeEventListener('resize', checkMobile))
 
 function startStudy() {
   router.push({ path: '/study', query: { lessons: [...store.selectedLessonIds].join(',') } })
+}
+
+function openSettings(lang) { settingsLang.value = lang }
+
+async function handleSettings({ direction_mode }) {
+  await api.updateLanguage(settingsLang.value.id, { direction_mode })
+  settingsLang.value = null
+  await store.fetchDashboard()
 }
 </script>
