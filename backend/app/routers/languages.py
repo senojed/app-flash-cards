@@ -40,7 +40,7 @@ async def dashboard(user: User = Depends(get_current_user), db: AsyncSession = D
             ))
         output.append(LanguageDashboard(
             id=lang.id, name=lang.name, emoji=lang.emoji, direction_mode=lang.direction_mode,
-            target_lang=lang.target_lang, order=lang.order,
+            source_lang=lang.source_lang, target_lang=lang.target_lang, order=lang.order,
             total_cards=lang_total, learned_cards=lang_learned, lessons=lessons_out,
         ))
     return output

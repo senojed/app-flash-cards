@@ -6,8 +6,8 @@
       <span class="w-8 h-8 rounded-full bg-gray-700 flex items-center justify-center text-sm">👤</span>
     </div>
 
-    <!-- Language tree -->
-    <div class="flex-1 overflow-y-auto p-3 space-y-1">
+    <!-- Desktop: Language tree -->
+    <div v-if="!isMobile" class="flex-1 overflow-y-auto p-3 space-y-1">
       <LanguageItem
         v-for="lang in store.languages"
         :key="lang.id"
@@ -41,10 +41,27 @@
       </button>
     </div>
 
-    <!-- Start button -->
-    <div class="p-3 border-t border-gray-800">
+    <!-- Mobil: prázdný flex-1 -->
+    <div v-else class="flex-1" />
+
+    <!-- Start / Zrušit tlačítko (jen desktop) -->
+    <div v-if="!isMobile" class="p-3 border-t border-gray-800">
       <button
-        v-if="store.selectedCount > 0"
+        v-if="isStudying"
+        @click="cancelStudy"
+        class="w-full bg-red-800 hover:bg-red-700 text-white text-sm font-semibold py-2.5 rounded-lg"
+      >
+        ✕ Zrušit lekci
+      </button>
+      <button
+        v-else-if="isFinished"
+        @click="startStudy"
+        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2.5 rounded-lg"
+      >
+        ▶ Opakovat lekci
+      </button>
+      <button
+        v-else-if="store.selectedCount > 0"
         @click="startStudy"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2.5 rounded-lg"
       >
@@ -57,25 +74,52 @@
       <router-link to="/stats" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-gray-800">
         📊 Statistiky
       </router-link>
+      <router-link to="/settings" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-gray-800">
+        ⚙️ Nastavení
+      </router-link>
     </div>
   </aside>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useLanguagesStore } from '../../stores/languages'
+import { useStudyStore } from '../../stores/study'
 import { api } from '../../api'
 import LanguageItem from '../sidebar/LanguageItem.vue'
 
 const store = useLanguagesStore()
+const studyStore = useStudyStore()
 const router = useRouter()
+const route = useRoute()
 const showAddLang = ref(false)
 const newLangName = ref('')
 const newLangEmoji = ref('')
+const isMobile = ref(false)
+
+function checkMobile() { isMobile.value = window.innerWidth < 768 }
+onMounted(() => { checkMobile(); window.addEventListener('resize', checkMobile) })
+onUnmounted(() => window.removeEventListener('resize', checkMobile))
+
+const isStudying = computed(() =>
+  route.path === '/study' && studyStore.cards.length > 0 && !studyStore.isFinished
+)
+
+const isFinished = computed(() =>
+  route.path === '/study' && studyStore.isFinished
+)
 
 function startStudy() {
-  router.push({ path: '/study', query: { lessons: [...store.selectedLessonIds].join(',') } })
+  const ids = store.selectedCount > 0
+    ? [...store.selectedLessonIds].join(',')
+    : studyStore.currentLessonIds.join(',')
+  router.push({ path: '/study', query: { lessons: ids } })
+}
+
+function cancelStudy() {
+  studyStore.clearSession()
+  router.push('/')
 }
 
 async function addLanguage() {

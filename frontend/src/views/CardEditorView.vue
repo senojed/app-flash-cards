@@ -10,7 +10,7 @@
         <label class="text-gray-400 text-xs uppercase tracking-wider">Přední strana</label>
         <textarea
           v-model="front"
-          @input="isDirty = true; scheduleTranslate()"
+          @input="isDirty = true"
           rows="3"
           class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500 resize-none"
         />
@@ -18,7 +18,12 @@
       </div>
 
       <div class="space-y-2">
-        <label class="text-gray-400 text-xs uppercase tracking-wider">Zadní strana</label>
+        <div class="flex items-center justify-between">
+          <label class="text-gray-400 text-xs uppercase tracking-wider">Zadní strana</label>
+          <button @click="translate" :disabled="translating || !front.trim()" class="text-indigo-400 hover:text-indigo-300 text-xs disabled:opacity-40">
+            {{ translating ? '...' : '🔄 Přeložit' }}
+          </button>
+        </div>
         <textarea
           v-model="back"
           rows="3"
@@ -59,7 +64,7 @@ const frontMedia = ref(null)
 const backMedia = ref(null)
 const sourceLang = ref('en')
 const targetLang = ref('cs')
-let translateTimer = null
+const translating = ref(false)
 const isDirty = ref(false)
 
 onBeforeRouteLeave(() => {
@@ -68,17 +73,18 @@ onBeforeRouteLeave(() => {
   }
 })
 
-async function scheduleTranslate() {
-  clearTimeout(translateTimer)
-  if (!front.value.trim() || back.value) return
-  translateTimer = setTimeout(async () => {
-    try {
-      const { data } = await api.translate(front.value, targetLang.value, sourceLang.value)
-      if (!back.value) back.value = data.translation
-    } catch {
-      // překlad není dostupný
-    }
-  }, 1000)
+async function translate() {
+  if (!front.value.trim() || translating.value) return
+  translating.value = true
+  try {
+    const { data } = await api.translate(front.value, targetLang.value, sourceLang.value)
+    back.value = data.translation
+    isDirty.value = true
+  } catch {
+    // překlad není dostupný
+  } finally {
+    translating.value = false
+  }
 }
 
 async function save() {

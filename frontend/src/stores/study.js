@@ -10,6 +10,7 @@ export const useStudyStore = defineStore('study', () => {
   const history = ref([])  // [{card, quality, previousState}] — max 5
   const revealed = ref(false)
   const animationDirection = ref(null)  // 'left' | 'right' | null
+  const currentLessonIds = ref([])
 
   const currentCard = computed(() => cards.value[currentIndex.value] ?? null)
   const isFinished = computed(() => currentIndex.value >= cards.value.length)
@@ -20,6 +21,7 @@ export const useStudyStore = defineStore('study', () => {
     history.value = []
     revealed.value = false
     animationDirection.value = null
+    currentLessonIds.value = lessonIds
     const { data } = await api.getStudyCards(lessonIds)
     cards.value = data
     saveSession(lessonIds)
@@ -31,6 +33,7 @@ export const useStudyStore = defineStore('study', () => {
     history.value = []
     revealed.value = false
     animationDirection.value = null
+    currentLessonIds.value = lessonIds
     const { data } = await api.getStudyCards(lessonIds, true)
     cards.value = data
     saveSession(lessonIds)
@@ -91,7 +94,7 @@ export const useStudyStore = defineStore('study', () => {
   }
 
   return {
-    cards, currentIndex, history, revealed, animationDirection,
+    cards, currentIndex, history, revealed, animationDirection, currentLessonIds,
     currentCard, isFinished,
     startSession, startSessionForce, loadSavedSession, clearSession, reveal, rate, undo,
   }
