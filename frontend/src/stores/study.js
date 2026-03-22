@@ -15,13 +15,23 @@ export const useStudyStore = defineStore('study', () => {
   const isFinished = computed(() => currentIndex.value >= cards.value.length)
 
   async function startSession(lessonIds) {
-    // Reset všeho před načtením nových karet
     cards.value = []
     currentIndex.value = 0
     history.value = []
     revealed.value = false
     animationDirection.value = null
     const { data } = await api.getStudyCards(lessonIds)
+    cards.value = data
+    saveSession(lessonIds)
+  }
+
+  async function startSessionForce(lessonIds) {
+    cards.value = []
+    currentIndex.value = 0
+    history.value = []
+    revealed.value = false
+    animationDirection.value = null
+    const { data } = await api.getStudyCards(lessonIds, true)
     cards.value = data
     saveSession(lessonIds)
   }
@@ -83,6 +93,6 @@ export const useStudyStore = defineStore('study', () => {
   return {
     cards, currentIndex, history, revealed, animationDirection,
     currentCard, isFinished,
-    startSession, loadSavedSession, clearSession, reveal, rate, undo,
+    startSession, startSessionForce, loadSavedSession, clearSession, reveal, rate, undo,
   }
 })

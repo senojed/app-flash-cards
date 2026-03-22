@@ -32,7 +32,7 @@ export const api = {
   },
 
   // Study
-  getStudyCards: (lessonIds) => http.post('/study/cards', { lesson_ids: lessonIds }),
+  getStudyCards: (lessonIds, force = false) => http.post('/study/cards', { lesson_ids: lessonIds, force }),
   rateCard: (data) => http.post('/study/rate', data),
   undoRating: (previousState) => http.post('/study/undo', previousState),
 

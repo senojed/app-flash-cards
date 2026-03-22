@@ -62,7 +62,7 @@ async def get_study_cards(
                     )
                 )
                 prog = prog_result.scalar_one_or_none()
-                if prog and prog.due_date > date.today():
+                if not req.force and prog and prog.due_date > date.today():
                     continue
 
                 front_field = next(f for f in card.fields if f.label == "front")

@@ -5,6 +5,7 @@ from app.models.progress import ProgressDirection
 
 class StudySessionRequest(BaseModel):
     lesson_ids: list[uuid.UUID]
+    force: bool = False  # ignorovat due_date, vrátit všechny karty
 
 
 class StudyCard(BaseModel):
