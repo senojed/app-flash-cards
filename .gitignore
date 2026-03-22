@@ -1,0 +1,9 @@
+.env
+__pycache__/
+*.pyc
+.venv/
+node_modules/
+dist/
+media/*
+!media/.gitkeep
+.superpowers/
