@@ -68,16 +68,20 @@ const slideClass = computed(() =>
 
 onMounted(async () => {
   const lessonParam = route.query.lessons
-  const saved = store.loadSavedSession()
 
-  if (saved && !lessonParam) {
-    showRecovery.value = true
+  if (lessonParam) {
+    // Vždy začni novou session pokud jsou předány lekce
+    store.clearSession()
+    const lessonIds = lessonParam.split(',')
+    await store.startSession(lessonIds)
     return
   }
 
-  if (lessonParam) {
-    const lessonIds = lessonParam.split(',')
-    await store.startSession(lessonIds)
+  const saved = store.loadSavedSession()
+  if (saved) {
+    showRecovery.value = true
+  } else {
+    router.push('/')
   }
 })
 

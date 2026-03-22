@@ -2,7 +2,10 @@
   <AppLayout>
     <div class="p-6 max-w-2xl mx-auto">
       <div class="flex items-center justify-between mb-6">
-        <h1 class="text-white font-bold text-lg">{{ lessonName }}</h1>
+        <div class="flex items-center gap-3">
+          <button @click="$router.push('/')" class="text-gray-400 hover:text-white text-sm">← Zpět</button>
+          <h1 class="text-white font-bold text-lg">{{ lessonName }}</h1>
+        </div>
         <div class="flex gap-2">
           <router-link :to="`/lessons/${lessonId}/import`" class="bg-gray-700 text-white text-xs px-3 py-2 rounded-lg">📥 Import</router-link>
           <router-link :to="`/lessons/${lessonId}/cards/new`" class="bg-indigo-600 text-white text-xs px-3 py-2 rounded-lg">+ Přidat kartu</router-link>

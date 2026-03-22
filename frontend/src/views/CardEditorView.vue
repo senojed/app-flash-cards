@@ -1,7 +1,10 @@
 <template>
   <AppLayout>
     <div class="p-6 max-w-lg mx-auto space-y-6">
-      <h1 class="text-white font-bold text-lg">{{ isNew ? 'Nová karta' : 'Upravit kartu' }}</h1>
+      <div class="flex items-center gap-3">
+        <button @click="$router.back()" class="text-gray-400 hover:text-white text-sm">← Zpět</button>
+        <h1 class="text-white font-bold text-lg">{{ isNew ? 'Nová karta' : 'Upravit kartu' }}</h1>
+      </div>
 
       <div class="space-y-2">
         <label class="text-gray-400 text-xs uppercase tracking-wider">Přední strana</label>

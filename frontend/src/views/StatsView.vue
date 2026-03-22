@@ -1,7 +1,10 @@
 <template>
   <AppLayout>
     <div class="p-6 max-w-2xl mx-auto space-y-6">
-      <h1 class="text-white font-bold text-lg">Statistiky</h1>
+      <div class="flex items-center gap-3">
+        <button @click="$router.push('/')" class="text-gray-400 hover:text-white text-sm">← Zpět</button>
+        <h1 class="text-white font-bold text-lg">Statistiky</h1>
+      </div>
 
       <div class="grid grid-cols-3 gap-4">
         <div class="bg-gray-900 rounded-xl p-4 text-center">
