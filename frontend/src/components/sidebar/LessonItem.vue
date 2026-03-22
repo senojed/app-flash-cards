@@ -1,13 +1,13 @@
 <template>
-  <div class="flex items-center gap-1 px-2 py-1 rounded text-xs cursor-pointer hover:bg-gray-800"
+  <div class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-gray-800"
        :class="isSelected ? 'bg-indigo-950' : ''">
     <input type="checkbox" :checked="isSelected" @change="store.toggleLesson(lesson.id)"
-           class="accent-indigo-500 w-3 h-3" />
+           class="accent-indigo-500 w-3.5 h-3.5 shrink-0" />
     <router-link :to="`/lessons/${lesson.id}/cards`" class="flex-1 truncate" :class="isSelected ? 'text-indigo-200' : 'text-gray-400'" @click.stop>
       {{ lesson.name }}
     </router-link>
-    <span class="text-green-400 font-bold">{{ lesson.learned_cards }}</span>
-    <span class="text-gray-600">/{{ lesson.total_cards }}</span>
+    <span class="text-green-400 text-xs font-bold shrink-0">{{ lesson.learned_cards }}</span>
+    <span class="text-gray-600 text-xs shrink-0">/{{ lesson.total_cards }}</span>
     <ContextMenu @rename="showRename = true" @reset="handleReset" @delete="showConfirm = true" />
 
     <RenameDialog v-if="showRename" :initial-value="lesson.name" @confirm="handleRename" @cancel="showRename = false" />

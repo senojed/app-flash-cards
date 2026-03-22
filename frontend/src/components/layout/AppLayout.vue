@@ -13,7 +13,7 @@
 
     <div class="flex flex-col flex-1 overflow-hidden">
       <AppTopbar v-if="isMobile" @menu="menuOpen = true" />
-      <main class="flex-1 overflow-auto">
+      <main class="flex-1 overflow-auto p-6">
         <slot />
       </main>
     </div>
