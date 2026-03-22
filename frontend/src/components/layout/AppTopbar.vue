@@ -6,8 +6,8 @@
       <button
         v-if="isStudying"
         @click="cancelStudy"
-        class="w-8 h-8 rounded-full bg-red-700 hover:bg-red-600 flex items-center justify-center text-white text-sm"
-      >⏹</button>
+        class="w-8 h-8 rounded-full bg-red-700 hover:bg-red-600 flex items-center justify-center text-white font-bold text-sm"
+      >✕</button>
     </div>
     <span class="text-indigo-400 font-bold text-sm">FlashCards</span>
     <span class="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-xs">👤</span>

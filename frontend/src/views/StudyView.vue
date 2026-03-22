@@ -76,7 +76,7 @@
 </template>
 
 <script setup>
-import { ref, watch, onMounted } from 'vue'
+import { ref, watch, onMounted, nextTick } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '../stores/study'
 import { useLanguagesStore } from '../stores/languages'
@@ -156,4 +156,13 @@ async function studyAll() {
 async function handleRate(quality) {
   await store.rate(quality)
 }
+
+// Restart session při změně query (např. Procvičit vybrané ze sidebaru)
+watch(() => route.query.t, async (t) => {
+  if (!t || !route.query.lessons) return
+  currentLessonIds.value = route.query.lessons.split(',')
+  loading.value = true
+  await store.startSession(currentLessonIds.value)
+  loading.value = false
+})
 </script>

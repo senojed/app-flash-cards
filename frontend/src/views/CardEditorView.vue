@@ -10,7 +10,7 @@
         <label class="text-gray-400 text-xs uppercase tracking-wider">Přední strana</label>
         <textarea
           v-model="front"
-          @input="isDirty = true"
+          @input="isDirty = true; scheduleTranslate()"
           rows="3"
           class="w-full bg-gray-900 border border-gray-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-indigo-500 resize-none"
         />
@@ -20,7 +20,7 @@
       <div class="space-y-2">
         <div class="flex items-center justify-between">
           <label class="text-gray-400 text-xs uppercase tracking-wider">Zadní strana</label>
-          <button @click="translate" :disabled="translating || !front.trim()" class="text-indigo-400 hover:text-indigo-300 text-xs disabled:opacity-40">
+          <button @click="doTranslate" :disabled="translating || !front.trim()" class="text-indigo-400 hover:text-indigo-300 text-xs disabled:opacity-40">
             {{ translating ? '...' : '🔄 Přeložit' }}
           </button>
         </div>
@@ -66,6 +66,7 @@ const sourceLang = ref('en')
 const targetLang = ref('cs')
 const translating = ref(false)
 const isDirty = ref(false)
+let translateTimer = null
 
 onBeforeRouteLeave(() => {
   if (isDirty.value) {
@@ -73,7 +74,7 @@ onBeforeRouteLeave(() => {
   }
 })
 
-async function translate() {
+async function doTranslate() {
   if (!front.value.trim() || translating.value) return
   translating.value = true
   try {
@@ -85,6 +86,12 @@ async function translate() {
   } finally {
     translating.value = false
   }
+}
+
+function scheduleTranslate() {
+  clearTimeout(translateTimer)
+  if (!front.value.trim() || back.value) return
+  translateTimer = setTimeout(doTranslate, 1000)
 }
 
 async function save() {

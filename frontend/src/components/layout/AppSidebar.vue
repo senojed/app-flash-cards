@@ -54,18 +54,11 @@
         ✕ Zrušit lekci
       </button>
       <button
-        v-else-if="isFinished"
+        v-else-if="store.selectedCount > 0 || isFinished"
         @click="startStudy"
         class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2.5 rounded-lg"
       >
-        ▶ Opakovat lekci
-      </button>
-      <button
-        v-else-if="store.selectedCount > 0"
-        @click="startStudy"
-        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2.5 rounded-lg"
-      >
-        ▶ Začít vybrané ({{ store.selectedCount }})
+        ▶ {{ isFinished ? 'Procvičit vybrané' : `Začít vybrané (${store.selectedCount})` }}
       </button>
     </div>
 
@@ -114,7 +107,7 @@ function startStudy() {
   const ids = store.selectedCount > 0
     ? [...store.selectedLessonIds].join(',')
     : studyStore.currentLessonIds.join(',')
-  router.push({ path: '/study', query: { lessons: ids } })
+  router.push({ path: '/study', query: { lessons: ids, t: Date.now() } })
 }
 
 function cancelStudy() {

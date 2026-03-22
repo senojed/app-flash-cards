@@ -23,7 +23,7 @@
       </button>
     </div>
 
-    <EditLanguageDialog v-if="showRename" :initial-name="language.name" :initial-emoji="language.emoji" :initial-source-lang="language.source_lang" @confirm="handleRename" @cancel="showRename = false" />
+    <EditLanguageDialog v-if="showRename" :initial-name="language.name" :initial-emoji="language.emoji" :initial-source-lang="language.source_lang" :initial-direction-mode="language.direction_mode" @confirm="handleRename" @cancel="showRename = false" />
     <ConfirmDialog
       v-if="showConfirm"
       title="Smazat jazyk"
@@ -51,9 +51,9 @@ const showConfirm = ref(false)
 const showAddLesson = ref(false)
 const newLessonName = ref('')
 
-async function handleRename({ name, emoji, source_lang }) {
+async function handleRename({ name, emoji, source_lang, direction_mode }) {
   showRename.value = false
-  await api.updateLanguage(props.language.id, { name, emoji, source_lang })
+  await api.updateLanguage(props.language.id, { name, emoji, source_lang, direction_mode })
   await store.fetchDashboard()
 }
 
