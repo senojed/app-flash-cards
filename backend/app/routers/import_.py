@@ -78,4 +78,7 @@ def _parse_csv(content: bytes) -> list[dict]:
 
 
 def _parse_json(content: bytes) -> list[dict]:
-    return json.loads(content)
+    try:
+        return json.loads(content)
+    except json.JSONDecodeError as e:
+        raise HTTPException(400, f"Invalid JSON: {e}")

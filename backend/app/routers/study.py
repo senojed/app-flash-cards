@@ -65,8 +65,10 @@ async def get_study_cards(
                 if not req.force and prog and prog.due_date > date.today():
                     continue
 
-                front_field = next(f for f in card.fields if f.label == "front")
-                back_field = next(f for f in card.fields if f.label == "back")
+                front_field = next((f for f in card.fields if f.label == "front"), None)
+                back_field = next((f for f in card.fields if f.label == "back"), None)
+                if not front_field or not back_field:
+                    continue
 
                 if d == ProgressDirection.front_to_back:
                     front_content, back_content = front_field.content, back_field.content

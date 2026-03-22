@@ -51,6 +51,7 @@
             :revealed="store.revealed"
             :slide-class="slideClass"
             :source-lang="sourceLang"
+            :target-lang="targetLang"
             @reveal="store.reveal()"
           />
           <RatingButtons v-if="store.revealed" @rate="handleRate" />
@@ -93,6 +94,7 @@ const showRecovery = ref(false)
 const loading = ref(false)
 const currentLessonIds = ref([])
 const sourceLang = ref('')
+const targetLang = ref('')
 
 const slideClass = ref('')
 
@@ -103,7 +105,7 @@ watch(() => store.animationDirection, (dir) => {
 onMounted(async () => {
   // Vždy načti dashboard (oprava prázdného sidebaru po reloadu)
   if (langStore.languages.length === 0) {
-    langStore.fetchDashboard()
+    await langStore.fetchDashboard()
   }
 
   const lessonParam = route.query.lessons
@@ -114,6 +116,7 @@ onMounted(async () => {
     for (const lang of langStore.languages) {
       if (lang.lessons.some(l => currentLessonIds.value.includes(l.id))) {
         sourceLang.value = lang.source_lang || ''
+        targetLang.value = lang.target_lang || ''
         break
       }
     }
@@ -134,6 +137,7 @@ onMounted(async () => {
 async function resumeSession() {
   showRecovery.value = false
   const saved = store.loadSavedSession()
+  if (!saved?.lessonIds) { router.push('/'); return }
   currentLessonIds.value = saved.lessonIds
   await store.startSession(saved.lessonIds)
   store.currentIndex = saved.currentIndex

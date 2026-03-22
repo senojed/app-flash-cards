@@ -81,7 +81,7 @@ export const useStudyStore = defineStore('study', () => {
       currentIndex.value++
       revealed.value = false
       animationDirection.value = null
-      saveSession(null)
+      saveSession(currentLessonIds.value)
     }, 300)
   }
 

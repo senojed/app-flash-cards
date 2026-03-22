@@ -18,7 +18,7 @@
             <p class="text-gray-300 text-2xl">{{ card.back }}</p>
             <img v-if="card.back_image" :src="`/media/${card.back_image}`"
                  class="mt-3 rounded-lg max-h-32 mx-auto" />
-            <button @click.stop="speak(card.back)" class="text-indigo-400 text-sm mt-2">🔊</button>
+            <button @click.stop="speak(card.back, targetLang)" class="text-indigo-400 text-sm mt-2">🔊</button>
           </div>
         </Transition>
 
@@ -29,7 +29,7 @@
 </template>
 
 <script setup>
-const props = defineProps({ card: Object, revealed: Boolean, slideClass: String, sourceLang: { type: String, default: '' } })
+const props = defineProps({ card: Object, revealed: Boolean, slideClass: String, sourceLang: { type: String, default: '' }, targetLang: { type: String, default: '' } })
 const emit = defineEmits(['reveal'])
 
 function speak(text, lang) {
