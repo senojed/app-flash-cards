@@ -1,10 +1,12 @@
 import pytest
 import pytest_asyncio
 from sqlalchemy.ext.asyncio import create_async_engine, async_sessionmaker, AsyncSession
+import app.database as db_module
 from app.database import Base, get_db
 from app.main import app
 
 TEST_DATABASE_URL = "sqlite+aiosqlite:///:memory:"
+
 
 @pytest_asyncio.fixture(scope="function", autouse=True)
 async def override_get_db():
