@@ -9,7 +9,7 @@
         class="w-8 h-8 rounded-full bg-red-700 hover:bg-red-600 flex items-center justify-center text-white font-bold text-sm"
       >✕</button>
     </div>
-    <span class="text-indigo-400 font-bold text-sm">FlashCards</span>
+    <span class="text-indigo-400 font-bold text-sm">FlashCards <span class="text-gray-500 text-xs font-normal">v0.9</span></span>
     <span class="w-7 h-7 rounded-full bg-gray-700 flex items-center justify-center text-xs">👤</span>
   </header>
 </template>
