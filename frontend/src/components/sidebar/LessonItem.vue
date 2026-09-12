@@ -1,13 +1,21 @@
 <template>
-  <div class="flex items-center gap-2 px-2 py-1.5 rounded-lg text-sm cursor-pointer hover:bg-gray-800"
-       :class="isSelected ? 'bg-indigo-950' : ''">
-    <input type="checkbox" :checked="isSelected" @change="store.toggleLesson(lesson.id)"
-           class="accent-indigo-500 w-3.5 h-3.5 shrink-0" />
-    <router-link :to="`/lessons/${lesson.id}/cards`" class="flex-1 truncate" :class="isSelected ? 'text-indigo-200' : 'text-gray-400'" @click.stop>
+  <div style="display:flex; align-items:center; gap:8px; padding:7px 10px; border-radius:8px; cursor:pointer; font-size:12px; margin-bottom:2px; transition:all 0.12s"
+       :style="isSelected ? 'background:#2a1f45; color:#c4b5fd' : 'color:#6b7280'"
+       @mouseover="!isSelected && ($event.currentTarget.style.background='#2a2540') && ($event.currentTarget.style.color='#a1a1aa')"
+       @mouseout="!isSelected && ($event.currentTarget.style.background='') && ($event.currentTarget.style.color='#6b7280')">
+    <!-- Checkbox -->
+    <div style="width:16px; height:16px; border-radius:4px; flex-shrink:0; display:flex; align-items:center; justify-content:center; font-size:10px; font-weight:700; cursor:pointer"
+         :style="isSelected ? 'background:#7c3aed; color:white' : 'border:1.5px solid #3f3f60'"
+         @click.stop="store.toggleLesson(lesson.id)">
+      <span v-if="isSelected">✓</span>
+    </div>
+    <router-link :to="`/lessons/${lesson.id}/cards`"
+      style="flex:1; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; text-decoration:none; color:inherit"
+      @click.stop>
       {{ lesson.name }}
     </router-link>
-    <span class="text-green-400 text-xs font-bold shrink-0">{{ lesson.learned_cards }}</span>
-    <span class="text-gray-600 text-xs shrink-0">/{{ lesson.total_cards }}</span>
+    <span style="font-size:10px; font-weight:700; color:#a78bfa; flex-shrink:0">{{ lesson.learned_cards }}</span>
+    <span style="font-size:10px; color:#3f3f60; flex-shrink:0">/{{ lesson.total_cards }}</span>
     <ContextMenu @rename="showRename = true" @reset="handleReset" @delete="showConfirm = true" />
 
     <RenameDialog v-if="showRename" :initial-value="lesson.name" @confirm="handleRename" @cancel="showRename = false" />

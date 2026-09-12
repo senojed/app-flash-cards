@@ -1,12 +1,13 @@
 <template>
-  <aside class="w-64 bg-gray-900 flex flex-col border border-gray-800 rounded-2xl shrink-0 overflow-hidden">
+  <aside style="width:220px; background:#211d2f; border-right:1px solid #2d2840; display:flex; flex-direction:column; flex-shrink:0">
     <!-- Header -->
-    <div class="px-4 py-4 border-b border-gray-800 flex items-center justify-between">
-      <span class="text-indigo-400 font-bold text-base">📚 FlashCards <span class="text-gray-500 text-xs font-normal">v0.9</span></span>
+    <div style="padding:20px 16px; background:linear-gradient(135deg,#7c3aed 0%,#4f46e5 100%)">
+      <div style="font-size:15px; font-weight:800; color:white; letter-spacing:-0.3px">📚 FlashCards</div>
+      <div style="font-size:10px; color:rgba(255,255,255,0.6); margin-top:2px">v0.9 · beta</div>
     </div>
 
     <!-- Desktop: Language tree -->
-    <div v-if="!isMobile" class="flex-1 overflow-y-auto p-3 space-y-1">
+    <div v-if="!isMobile" style="flex:1; overflow-y:auto; padding:12px 8px">
       <LanguageItem
         v-for="lang in store.languages"
         :key="lang.id"
@@ -14,60 +15,68 @@
       />
 
       <!-- Přidat jazyk -->
-      <div v-if="showAddLang" class="mt-2 space-y-2 bg-gray-800 rounded-lg p-3">
+      <div v-if="showAddLang" style="margin-top:8px; background:#2a2540; border-radius:10px; padding:12px">
         <input
           v-model="newLangName"
           placeholder="Název jazyka (např. Angličtina)"
-          class="w-full bg-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+          style="width:100%; background:#1a1625; border:1px solid #2d2840; border-radius:7px; padding:8px 10px; font-size:12px; color:white; outline:none; margin-bottom:8px"
           @keyup.enter="addLanguage"
           autofocus
         />
-        <div class="flex gap-2 items-center">
+        <div style="display:flex; gap:6px; align-items:center; margin-bottom:8px">
           <input
             v-model="newLangEmoji"
-            placeholder="🏳️ emoji"
-            class="w-24 bg-gray-700 rounded-lg px-3 py-2 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500"
+            placeholder="🏳️"
+            style="width:72px; background:#1a1625; border:1px solid #2d2840; border-radius:7px; padding:8px 10px; font-size:12px; color:white; outline:none"
           />
-          <span class="text-gray-500 text-xs flex-1">vlajka/emoji</span>
+          <span style="font-size:11px; color:#52525b">vlajka/emoji</span>
         </div>
-        <div class="flex gap-2">
-          <button @click="addLanguage" class="bg-indigo-600 hover:bg-indigo-700 text-white text-sm px-3 py-1.5 rounded-lg flex-1 font-medium">Přidat</button>
-          <button @click="showAddLang = false" class="text-gray-400 hover:text-gray-200 text-sm px-3 py-1.5 rounded-lg">Zrušit</button>
+        <div style="display:flex; gap:6px">
+          <button @click="addLanguage" style="background:#7c3aed; color:white; font-size:12px; font-weight:700; padding:7px 12px; border-radius:7px; border:none; flex:1; cursor:pointer">Přidat</button>
+          <button @click="showAddLang = false" style="font-size:12px; color:#71717a; padding:7px 10px; border-radius:7px; border:none; background:transparent; cursor:pointer">Zrušit</button>
         </div>
       </div>
-      <button v-else @click="showAddLang = true" class="w-full text-left text-sm text-gray-500 hover:text-gray-300 px-2 py-2 mt-1">
+      <button v-else @click="showAddLang = true"
+        style="width:100%; text-align:left; font-size:12px; color:#52525b; padding:7px 10px; margin-top:4px; border-radius:8px; border:none; background:transparent; cursor:pointer"
+        @mouseover="$event.target.style.color='#a78bfa'"
+        @mouseout="$event.target.style.color='#52525b'">
         + Přidat jazyk
       </button>
     </div>
 
     <!-- Mobil: prázdný flex-1 -->
-    <div v-else class="flex-1" />
+    <div v-else style="flex:1" />
 
     <!-- Start / Zrušit tlačítko (jen desktop) -->
-    <div v-if="!isMobile" class="p-3 border-t border-gray-800">
+    <div v-if="!isMobile" style="padding:12px 8px; border-top:1px solid #2d2840">
       <button
         v-if="isStudying"
         @click="cancelStudy"
-        class="w-full bg-red-800 hover:bg-red-700 text-white text-sm font-semibold py-2.5 rounded-lg"
+        style="width:100%; background:linear-gradient(135deg,#991b1b,#7f1d1d); color:white; font-size:14px; font-weight:800; padding:13px; border-radius:11px; border:none; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; box-shadow:0 4px 16px rgba(153,27,27,0.3)"
       >
         ✕ Zrušit lekci
       </button>
       <button
         v-else-if="store.selectedCount > 0"
         @click="startStudy"
-        class="w-full bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold py-2.5 rounded-lg"
+        style="width:100%; background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; font-size:14px; font-weight:800; padding:13px; border-radius:11px; border:none; cursor:pointer; letter-spacing:0.5px; text-transform:uppercase; box-shadow:0 4px 20px rgba(124,58,237,0.4); transition:all 0.2s"
+        @mouseover="$event.target.style.boxShadow='0 6px 30px rgba(124,58,237,0.6)'; $event.target.style.transform='translateY(-1px)'"
+        @mouseout="$event.target.style.boxShadow='0 4px 20px rgba(124,58,237,0.4)'; $event.target.style.transform=''"
       >
-        ▶ Začít vybrané ({{ store.selectedCount }})
+        ▶ START ({{ store.selectedCount }})
       </button>
     </div>
 
     <!-- Nav -->
-    <div class="p-3 border-t border-gray-800 space-y-1">
-      <router-link to="/stats" class="flex items-center gap-2 px-3 py-2 text-sm text-gray-400 hover:text-white rounded-lg hover:bg-gray-800">
-        📊 Statistiky
+    <div style="padding:12px 8px; border-top:1px solid #2d2840; display:flex; gap:4px">
+      <router-link to="/stats"
+        style="flex:1; text-align:center; padding:8px 4px; border-radius:8px; font-size:11px; color:#52525b; background:#2a2540; text-decoration:none; transition:all 0.12s"
+        @mouseover="$event.target.style.color='#a78bfa'"
+        @mouseout="$event.target.style.color='#52525b'">
+        📊 Stats
       </router-link>
-      <button disabled class="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 cursor-not-allowed rounded-lg w-full text-left">
-        ⚙️ Nastavení
+      <button disabled style="flex:1; text-align:center; padding:8px 4px; border-radius:8px; font-size:11px; color:#3f3f46; background:#2a2540; border:none; cursor:not-allowed">
+        ⚙️ Nast.
       </button>
     </div>
   </aside>
@@ -97,7 +106,6 @@ onUnmounted(() => window.removeEventListener('resize', checkMobile))
 const isStudying = computed(() =>
   route.path === '/study' && studyStore.cards.length > 0 && !studyStore.isFinished
 )
-
 
 function startStudy() {
   const ids = store.selectedCount > 0

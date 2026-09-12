@@ -1,20 +1,21 @@
 <template>
   <Teleport to="body">
     <div class="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
-      <div class="bg-gray-900 border border-gray-700 rounded-xl p-6 w-80 space-y-4">
+      <div class="rounded-2xl p-6 w-80 space-y-4" style="background:#211d2f; border:1px solid #2d2840">
         <p class="text-white font-semibold">Nastavení jazyka</p>
-        <div class="space-y-2">
-          <label class="text-gray-400 text-xs">Procvičování</label>
+        <div class="space-y-1.5">
+          <label class="text-xs" style="color:#52525b">Procvičování</label>
           <select v-model="directionMode"
-            class="w-full bg-gray-800 border border-gray-700 rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:border-indigo-500">
+            class="w-full rounded-lg px-3 py-2 text-white text-sm focus:outline-none focus:ring-1"
+            style="background:#1a1625; border:1px solid #2d2840; --tw-ring-color:#7c3aed">
             <option value="random">Náhodně (obě strany)</option>
             <option value="front_to_back">Přední → Zadní</option>
             <option value="back_to_front">Zadní → Přední</option>
           </select>
         </div>
         <div class="flex gap-3 justify-end">
-          <button @click="$emit('cancel')" class="text-gray-400 px-4 py-2 text-sm">Zrušit</button>
-          <button @click="$emit('confirm', { direction_mode: directionMode })" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Uložit</button>
+          <button @click="$emit('cancel')" class="px-4 py-2 text-sm transition-colors" style="color:#71717a" onmouseover="this.style.color='white'" onmouseout="this.style.color='#71717a'">Zrušit</button>
+          <button @click="$emit('confirm', { direction_mode: directionMode })" class="text-white px-4 py-2 rounded-lg text-sm font-semibold" style="background:#7c3aed">Uložit</button>
         </div>
       </div>
     </div>

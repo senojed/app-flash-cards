@@ -1,24 +1,45 @@
 <template>
   <div>
-    <div class="flex items-center gap-2 px-2 py-2 rounded-lg cursor-pointer hover:bg-gray-800"
+    <!-- Language card -->
+    <div style="background:#2a2540; border-radius:10px; padding:10px 12px; margin-bottom:8px; cursor:pointer; transition:all 0.15s"
+         @mouseover="$event.currentTarget.style.background='#302b4a'"
+         @mouseout="$event.currentTarget.style.background='#2a2540'"
          @click="store.setExpanded(language.id, !store.isExpanded(language.id))">
-      <span class="text-gray-500 text-xs w-3">{{ store.isExpanded(language.id) ? '▼' : '▶' }}</span>
-      <span class="text-lg">{{ language.emoji }}</span>
-      <span class="flex-1 text-sm font-semibold text-gray-200 truncate">{{ language.name }}</span>
-      <span class="text-green-400 text-xs font-bold">{{ language.learned_cards }}</span>
-      <span class="text-gray-600 text-xs">/{{ language.total_cards }}</span>
-      <ContextMenu :show-settings="true" @settings="showSettings = true" @rename="showRename = true" @reset="handleReset" @delete="showConfirm = true" />
+      <!-- Header řádek -->
+      <div style="display:flex; align-items:center; gap:6px; margin-bottom:6px">
+        <span style="font-size:10px; color:#52525b; width:12px">{{ store.isExpanded(language.id) ? '▼' : '▶' }}</span>
+        <span style="font-size:14px">{{ language.emoji }}</span>
+        <span style="flex:1; font-size:13px; font-weight:700; color:#e2e8f0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis">{{ language.name }}</span>
+        <ContextMenu :show-settings="true" @settings="showSettings = true" @rename="showRename = true" @reset="handleReset" @delete="showConfirm = true" />
+      </div>
+      <!-- Progress bar -->
+      <div style="height:4px; background:#1a1625; border-radius:99px; overflow:hidden">
+        <div style="height:100%; border-radius:99px; background:linear-gradient(90deg,#7c3aed,#a78bfa); transition:width 0.3s"
+             :style="{ width: progressPct + '%' }"></div>
+      </div>
+      <!-- Stats -->
+      <div style="display:flex; justify-content:space-between; margin-top:5px">
+        <span style="font-size:10px; color:#6b7280"><strong style="color:#a78bfa">{{ language.learned_cards }}</strong> naučeno</span>
+        <span style="font-size:10px; color:#6b7280">{{ language.total_cards > 0 ? progressPct + '%' : '—' }}</span>
+      </div>
     </div>
-    <div v-if="store.isExpanded(language.id)" class="pl-5 space-y-0.5 mt-0.5">
+
+    <!-- Lekce -->
+    <div v-if="store.isExpanded(language.id)" style="padding-left:4px; margin-bottom:4px">
       <LessonItem v-for="lesson in language.lessons" :key="lesson.id" :lesson="lesson" :language-id="language.id" />
-      <div v-if="showAddLesson" class="px-2 py-2 space-y-2 bg-gray-800 rounded-lg mt-1">
-        <input v-model="newLessonName" placeholder="Název lekce" class="w-full bg-gray-700 rounded-lg px-3 py-1.5 text-sm text-white placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-indigo-500" @keyup.enter="addLesson" autofocus />
-        <div class="flex gap-2">
-          <button @click="addLesson" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-3 py-1.5 rounded-lg flex-1">Přidat</button>
-          <button @click="showAddLesson = false" class="text-gray-400 text-xs px-2 py-1.5 rounded-lg">Zrušit</button>
+      <div v-if="showAddLesson" style="padding:10px; background:#2a2540; border-radius:8px; margin-top:4px">
+        <input v-model="newLessonName" placeholder="Název lekce"
+               style="width:100%; background:#1a1625; border:1px solid #2d2840; border-radius:7px; padding:6px 10px; font-size:12px; color:white; outline:none; margin-bottom:6px"
+               @keyup.enter="addLesson" autofocus />
+        <div style="display:flex; gap:6px">
+          <button @click="addLesson" style="background:#7c3aed; color:white; font-size:12px; font-weight:700; padding:6px 10px; border-radius:7px; border:none; flex:1; cursor:pointer">Přidat</button>
+          <button @click="showAddLesson = false" style="font-size:12px; color:#71717a; padding:6px 8px; border-radius:7px; border:none; background:transparent; cursor:pointer">Zrušit</button>
         </div>
       </div>
-      <button v-else @click.stop="showAddLesson = true" class="w-full text-left text-xs text-gray-600 hover:text-gray-400 px-2 py-1.5 mt-0.5">
+      <button v-else @click.stop="showAddLesson = true"
+        style="width:100%; text-align:left; font-size:11px; color:#52525b; padding:6px 10px; margin-top:2px; border-radius:8px; border:none; background:transparent; cursor:pointer"
+        @mouseover="$event.target.style.color='#a78bfa'"
+        @mouseout="$event.target.style.color='#52525b'">
         + Přidat lekci
       </button>
     </div>
@@ -36,7 +57,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useLanguagesStore } from '../../stores/languages'
 import { api } from '../../api'
 import LessonItem from './LessonItem.vue'
@@ -52,6 +73,11 @@ const showSettings = ref(false)
 const showConfirm = ref(false)
 const showAddLesson = ref(false)
 const newLessonName = ref('')
+
+const progressPct = computed(() => {
+  if (!props.language.total_cards) return 0
+  return Math.round((props.language.learned_cards / props.language.total_cards) * 100)
+})
 
 async function handleRename({ name, emoji, source_lang }) {
   showRename.value = false

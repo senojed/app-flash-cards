@@ -1,46 +1,51 @@
 <template>
   <AppLayout>
-    <div class="flex flex-col items-center justify-center h-full gap-6 p-4">
+    <!-- Main studijní area — přesně jako v návrhu -->
+    <div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; padding:32px; position:relative; margin:-24px; min-height:calc(100% + 48px)">
+      <!-- Radial gradient pozadí (jako v návrhu .main::before) -->
+      <div style="position:absolute; width:800px; height:500px; background:radial-gradient(ellipse,rgba(109,40,217,0.08) 0%,transparent 70%); top:50%; left:50%; transform:translate(-50%,-50%); pointer-events:none; z-index:0"></div>
 
       <!-- Session recovery dialog -->
-      <div v-if="showRecovery" class="fixed inset-0 bg-black/70 flex items-center justify-center z-50">
-        <div class="bg-gray-900 rounded-xl p-6 text-center space-y-4">
-          <p class="text-white font-semibold">Máš rozdělanou session. Pokračovat?</p>
-          <div class="flex gap-3 justify-center">
-            <button @click="resumeSession" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Pokračovat</button>
-            <button @click="discardSession" class="bg-gray-700 text-white px-4 py-2 rounded-lg text-sm">Začít znovu</button>
+      <div v-if="showRecovery" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); display:flex; align-items:center; justify-content:center; z-index:50">
+        <div style="background:#211d2f; border:1px solid #2d2840; border-radius:16px; padding:24px; text-align:center">
+          <p style="color:white; font-weight:600; margin-bottom:16px">Máš rozdělanou session. Pokračovat?</p>
+          <div style="display:flex; gap:12px; justify-content:center">
+            <button @click="resumeSession" style="background:#7c3aed; color:white; padding:8px 16px; border-radius:8px; border:none; font-size:13px; font-weight:600; cursor:pointer">Pokračovat</button>
+            <button @click="discardSession" style="background:#2a2540; color:white; padding:8px 16px; border-radius:8px; border:none; font-size:13px; cursor:pointer">Začít znovu</button>
           </div>
         </div>
       </div>
 
       <!-- Načítání -->
-      <div v-if="loading" class="text-gray-500 text-sm">Načítám karty...</div>
+      <div v-if="loading" style="color:#52525b; font-size:13px; position:relative; z-index:1">Načítám karty...</div>
 
       <!-- Žádné karty dnes -->
-      <div v-else-if="!loading && store.cards.length === 0" class="text-center space-y-4">
-        <p class="text-4xl">✅</p>
-        <p class="text-white font-semibold">Žádné karty ke studiu!</p>
-        <p class="text-gray-400 text-sm">Všechny karty jsou naučeny nebo nejsou splatné.</p>
-        <div class="flex flex-col gap-3 items-center">
-          <button @click="studyAll" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold w-64">
+      <div v-else-if="!loading && store.cards.length === 0" style="text-align:center; position:relative; z-index:1">
+        <p style="font-size:40px; margin-bottom:16px">✅</p>
+        <p style="color:white; font-weight:600; font-size:16px; margin-bottom:8px">Žádné karty ke studiu!</p>
+        <p style="color:#71717a; font-size:13px; margin-bottom:20px">Všechny karty jsou naučeny nebo nejsou splatné.</p>
+        <div style="display:flex; flex-direction:column; gap:12px; align-items:center">
+          <button @click="studyAll"
+            style="background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; padding:12px 24px; border-radius:11px; border:none; font-size:14px; font-weight:800; cursor:pointer; width:256px; box-shadow:0 4px 20px rgba(124,58,237,0.4); letter-spacing:0.5px; text-transform:uppercase">
             ▶ Procvičit vše
           </button>
-          <button @click="$router.push('/')" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold w-64">
+          <button @click="$router.push('/')"
+            style="background:#2a2540; color:#a1a1aa; padding:12px 24px; border-radius:11px; border:none; font-size:14px; cursor:pointer; width:256px">
             ← Dashboard
           </button>
         </div>
       </div>
 
       <template v-else-if="store.cards.length > 0">
-        <!-- Progress + Undo -->
-        <div class="flex items-center justify-between w-80">
-          <span class="text-gray-500 text-xs">{{ store.currentIndex }} / {{ store.cards.length }}</span>
+        <!-- Progress row -->
+        <div style="display:flex; align-items:center; justify-content:space-between; width:100%; max-width:500px; position:relative; z-index:1">
+          <span style="font-size:12px; color:#52525b">Karta <strong style="color:#e2e8f0">{{ store.currentIndex }}</strong> / {{ store.cards.length }}</span>
           <UndoButton :can-undo="store.history.length > 0" @undo="store.undo()" />
         </div>
 
         <!-- Progress bar -->
-        <div class="w-80 bg-gray-800 rounded-full h-1">
-          <div class="bg-indigo-500 h-1 rounded-full transition-all"
+        <div style="width:100%; max-width:500px; height:8px; background:#2d2840; border-radius:99px; overflow:hidden; position:relative; z-index:1">
+          <div style="height:100%; border-radius:99px; background:linear-gradient(90deg,#7c3aed,#a78bfa,#7c3aed); background-size:200% 100%; animation:shimmer 2s infinite linear; box-shadow:0 0 12px rgba(167,139,250,0.5); transition:width 0.3s"
                :style="{ width: `${(store.currentIndex / Math.max(store.cards.length, 1)) * 100}%` }" />
         </div>
 
@@ -55,29 +60,30 @@
             @reveal="store.reveal()"
           />
           <RatingButtons v-if="store.revealed" @rate="handleRate" />
-          <p v-else class="text-gray-600 text-xs">Klikni na kartu pro odhalení</p>
+          <p v-else style="font-size:11px; color:#3f3f60; position:relative; z-index:1">Klikni na kartu pro odhalení</p>
         </template>
 
-        <div v-else-if="store.isFinished" class="text-center space-y-4">
-          <p class="text-4xl">🎉</p>
-          <p class="text-white font-semibold">Session dokončena!</p>
-          <div class="flex flex-col gap-3 items-center">
-            <button @click="studyAll" class="bg-indigo-600 hover:bg-indigo-700 text-white px-6 py-3 rounded-xl font-semibold w-64">
+        <div v-else-if="store.isFinished" style="text-align:center; position:relative; z-index:1">
+          <p style="font-size:40px; margin-bottom:16px">🎉</p>
+          <p style="color:white; font-weight:600; font-size:16px; margin-bottom:20px">Session dokončena!</p>
+          <div style="display:flex; flex-direction:column; gap:12px; align-items:center">
+            <button @click="studyAll"
+              style="background:linear-gradient(135deg,#7c3aed,#6d28d9); color:white; padding:12px 24px; border-radius:11px; border:none; font-size:14px; font-weight:800; cursor:pointer; width:256px; box-shadow:0 4px 20px rgba(124,58,237,0.4); letter-spacing:0.5px; text-transform:uppercase">
               ▶ Procvičit znovu
             </button>
-            <button @click="$router.push('/')" class="bg-gray-700 hover:bg-gray-600 text-white px-6 py-3 rounded-xl font-semibold w-64">
+            <button @click="$router.push('/')"
+              style="background:#2a2540; color:#a1a1aa; padding:12px 24px; border-radius:11px; border:none; font-size:14px; cursor:pointer; width:256px">
               ← Dashboard
             </button>
           </div>
         </div>
       </template>
-
     </div>
   </AppLayout>
 </template>
 
 <script setup>
-import { ref, watch, onMounted, nextTick } from 'vue'
+import { ref, watch, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useStudyStore } from '../stores/study'
 import { useLanguagesStore } from '../stores/languages'
@@ -95,7 +101,6 @@ const loading = ref(false)
 const currentLessonIds = ref([])
 const sourceLang = ref('')
 const targetLang = ref('')
-
 const slideClass = ref('')
 
 watch(() => store.animationDirection, (dir) => {
@@ -103,16 +108,11 @@ watch(() => store.animationDirection, (dir) => {
 })
 
 onMounted(async () => {
-  // Vždy načti dashboard (oprava prázdného sidebaru po reloadu)
-  if (langStore.languages.length === 0) {
-    await langStore.fetchDashboard()
-  }
+  if (langStore.languages.length === 0) await langStore.fetchDashboard()
 
   const lessonParam = route.query.lessons
-
   if (lessonParam) {
     currentLessonIds.value = lessonParam.split(',')
-    // Zjisti source_lang z prvního jazyka který obsahuje tyto lekce
     for (const lang of langStore.languages) {
       if (lang.lessons.some(l => currentLessonIds.value.includes(l.id))) {
         sourceLang.value = lang.source_lang || ''
@@ -150,8 +150,6 @@ function discardSession() {
 }
 
 async function studyAll() {
-  // Procvičit vše — pošleme speciální flag nebo dočasně změníme due_date logiku
-  // Jednodušší: reset progressu a začni znovu
   loading.value = true
   await store.startSessionForce(currentLessonIds.value)
   loading.value = false
@@ -161,7 +159,6 @@ async function handleRate(quality) {
   await store.rate(quality)
 }
 
-// Restart session při změně query (např. Procvičit vybrané ze sidebaru)
 watch(() => route.query.t, async (t) => {
   if (!t || !route.query.lessons) return
   currentLessonIds.value = route.query.lessons.split(',')

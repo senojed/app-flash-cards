@@ -2,7 +2,9 @@
   <button
     v-if="canUndo"
     @click="$emit('undo')"
-    class="text-gray-500 hover:text-gray-300 text-xs flex items-center gap-1"
+    style="font-size:12px; color:#52525b; background:#211d2f; border:1px solid #2d2840; padding:5px 12px; border-radius:7px; cursor:pointer; transition:all 0.12s"
+    @mouseover="$event.target.style.color='#a78bfa'; $event.target.style.borderColor='#4c1d95'"
+    @mouseout="$event.target.style.color='#52525b'; $event.target.style.borderColor='#2d2840'"
   >
     ↩ Zpět
   </button>

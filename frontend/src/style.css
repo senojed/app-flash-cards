@@ -7,3 +7,23 @@ html {
 *, *::before, *::after {
   box-sizing: border-box;
 }
+
+:root {
+  --c-bg: #1a1625;
+  --c-surface: #211d2f;
+  --c-surface-2: #2a2540;
+  --c-border: #2d2840;
+  --c-accent: #7c3aed;
+  --c-accent-light: #a78bfa;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2d2840; border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: #3d3860; }

@@ -1,19 +1,20 @@
 <template>
-  <div class="flex bg-gray-950 text-gray-100 gap-3 h-screen p-3">
+  <div style="display:flex; height:100vh; background:#1a1625; color:#f0f0f8; overflow:hidden; font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif">
     <!-- Desktop sidebar -->
     <AppSidebar v-if="!isMobile" />
 
     <!-- Mobilní overlay menu -->
     <div v-if="isMobile && menuOpen" class="fixed inset-0 z-40 flex">
-      <div class="w-72 bg-gray-900 h-full overflow-y-auto">
+      <div style="width:220px; background:#211d2f; height:100%; overflow-y:auto">
         <AppSidebar @close="menuOpen = false" />
       </div>
       <div class="flex-1 bg-black/50" @click="menuOpen = false" />
     </div>
 
-    <div class="flex flex-col flex-1 overflow-hidden rounded-2xl bg-gray-900 border border-gray-800">
+    <!-- Main content -->
+    <div style="flex:1; display:flex; flex-direction:column; overflow:hidden">
       <AppTopbar v-if="isMobile" @menu="menuOpen = true" />
-      <main class="flex-1 overflow-auto" style="padding:24px">
+      <main style="flex:1; overflow:auto; padding:24px">
         <slot />
       </main>
     </div>
